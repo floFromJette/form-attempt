@@ -21,14 +21,9 @@ import { format } from 'date-fns';
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Mock API call
 const submitFormData = async (data: FormValues): Promise<{ success: boolean }> => {
-  // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // In a real application, this would be an actual API call
   console.log('Form submitted with data:', data);
-  
   return { success: true };
 };
 
@@ -76,7 +71,7 @@ export function UserForm() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="w-full">
+        <Card className="w-full bg-card/50 backdrop-blur-sm border-primary/10">
           <CardHeader className="text-center">
             <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit mb-4">
               <CheckCircle className="h-8 w-8 text-primary" />
@@ -93,6 +88,7 @@ export function UserForm() {
                 setSubmitted(false);
               }}
               variant="outline"
+              className="bg-background/50 hover:bg-background/80"
             >
               Submit another response
             </Button>
@@ -108,7 +104,7 @@ export function UserForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className="w-full">
+      <Card className="w-full bg-card/50 backdrop-blur-sm border-primary/10">
         <CardHeader>
           <CardTitle>User Information</CardTitle>
           <CardDescription>
@@ -118,146 +114,150 @@ export function UserForm() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter your full name" 
-                        {...field} 
-                        className="transition-all focus-within:border-primary"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Your full name as it appears on official documents.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="birthdate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of Birth</FormLabel>
-                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                      <PopoverTrigger asChild>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={`w-full pl-3 text-left font-normal ${!field.value ? "text-muted-foreground" : ""}`}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Select a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
+                          <Input 
+                            placeholder="Enter your full name" 
+                            {...field} 
+                            className="bg-background/50"
+                          />
                         </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            setCalendarOpen(false);
-                          }}
-                          disabled={(date) => date > new Date()}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      Your date of birth will help personalize your experience.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        <FormDescription>
+                          Your full name as it appears on official documents.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="birthdate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Date of Birth</FormLabel>
+                        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={`w-full pl-3 text-left font-normal bg-background/50 ${!field.value ? "text-muted-foreground" : ""}`}
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP")
+                                ) : (
+                                  <span>Select a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={(date) => {
+                                field.onChange(date);
+                                setCalendarOpen(false);
+                              }}
+                              disabled={(date) => date > new Date()}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormDescription>
+                          Your date of birth will help personalize your experience.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a department" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="engineering">Engineering</SelectItem>
-                        <SelectItem value="marketing">Marketing</SelectItem>
-                        <SelectItem value="sales">Sales</SelectItem>
-                        <SelectItem value="finance">Finance</SelectItem>
-                        <SelectItem value="hr">Human Resources</SelectItem>
-                        <SelectItem value="support">Support</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Choose the department you're associated with.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="department"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Department</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="bg-background/50">
+                              <SelectValue placeholder="Select a department" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="engineering">Engineering</SelectItem>
+                            <SelectItem value="marketing">Marketing</SelectItem>
+                            <SelectItem value="sales">Sales</SelectItem>
+                            <SelectItem value="finance">Finance</SelectItem>
+                            <SelectItem value="hr">Human Resources</SelectItem>
+                            <SelectItem value="support">Support</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Choose the department you're associated with.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <Separator className="my-4" />
-
-              <FormField
-                control={form.control}
-                name="preference"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Would you like to receive notifications?</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="yes" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Yes
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="no" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            No
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="maybe" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Maybe
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormDescription>
-                      This setting can be changed later in your profile.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name="preference"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Would you like to receive notifications?</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            className="flex flex-col space-y-1"
+                          >
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="yes" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Yes
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="no" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                No
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="maybe" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                Maybe
+                              </FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormDescription>
+                          This setting can be changed later in your profile.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
               <Button 
                 type="submit" 
